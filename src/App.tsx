@@ -1,8 +1,9 @@
 import { providers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import Web3Modal from 'web3modal';
-import WalletConnectProvider from '@walletconnect/web3-provider'
-import { Box, Button, ButtonGroup, Flex, Heading, Image, Text } from '@chakra-ui/react'
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Box } from '@chakra-ui/react';
+import { Outlet } from 'react-router-dom';
 import Header from './components/layout/Header';
 
 const providerOptions = {
@@ -67,11 +68,11 @@ function App() {
   }, [provider]);
 
   useEffect(() => {
-   if (web3Modal.cachedProvider) {
-    onConnectWallet();
-   }
+    if (web3Modal.cachedProvider) {
+      onConnectWallet();
+    }
   }, [onConnectWallet]);
-  
+
 
   return (
     <Box className='container'>
@@ -82,30 +83,9 @@ function App() {
         disconnectWallet={onDisconnectWallet}
       />
 
-      <Box className='content'>
-        <Flex className='hero'>
-          <Flex grow={1} py={10} ps={40} className='hero-description' flexDirection='column'>
-            <Heading width='70%' mt={3}>Discover, collect, and sell utility NFTs</Heading>
-            <Text fontSize='2xl' width='70%' my={10}>OnDrip is the world's first and largest NFT marketplace</Text>
-
-            <ButtonGroup>
-              <Button>Explore</Button>
-              <Button>Create</Button>
-            </ButtonGroup>
-          </Flex>
-          <Flex grow={1} p={10} className='hero-image'>
-            <Image width={500} src='./featured_nft.jpeg'></Image>
-          </Flex>
-        </Flex>
-
-        <Flex py={10} px={20} className='featured'>
-          <Text fontSize='3xl'>Featured Utilities</Text>
-        </Flex>
-
+      <Box px={10} className='content'>
+        <Outlet />
       </Box>
-
-
-      {/* <button onClick={onConnectWallet}>Connect Wallet</button> */}
     </Box>
   );
 }

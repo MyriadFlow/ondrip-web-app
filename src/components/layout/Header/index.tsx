@@ -1,5 +1,6 @@
-import { Button, Flex, Heading, HStack, Link, Text } from '@chakra-ui/react'
+import { Button, Flex, Heading, HStack, Image, Link, Text } from '@chakra-ui/react'
 import { providers } from 'ethers';
+import {Link as RouterLink} from 'react-router-dom'
 
 type HeaderProps = {
   connectWallet: () => Promise<void>;
@@ -10,17 +11,21 @@ type HeaderProps = {
 
 function Header({ connectWallet, disconnectWallet, provider, walletAddress }: HeaderProps) {
   return (
-    <Flex px={10} py={5} className='header'>
+    <Flex mx={10} py={2} className='header' borderBottom='1px'>
       <Flex alignItems='center' className='logo' width='100%'>
-        <Heading as='h1'>OnDrip</Heading>
+        <Heading as='h1'>
+          <Link as={RouterLink} to='/'>
+            <Image height='60px' src='/logo.png' />
+          </Link>
+        </Heading>
       </Flex>
 
       <Flex alignItems='center' className='menu' width='100%' justifyContent='flex-end'>
         <Text mx={2}>{walletAddress}</Text>
 
         <HStack mx={5}>
-          <Link>Explore</Link>
-          <Link>Create</Link>
+          <Link as={RouterLink} to='/explore'>Explore</Link>
+          <Link as={RouterLink} to='/create'>Create</Link>
         </HStack>
 
         {!provider ?
