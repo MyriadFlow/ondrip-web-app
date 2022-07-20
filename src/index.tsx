@@ -1,9 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
+import Home from './pages/Home';
+import Create from './pages/Create';
+import Explore from './pages/Explore';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -12,7 +16,15 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ChakraProvider>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<App />}>
+            <Route index element={<Home />} />
+            <Route path='create' element={<Create />} />
+            <Route path='explore' element={<Explore />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>
 );
