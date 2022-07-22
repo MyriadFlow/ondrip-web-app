@@ -25,6 +25,11 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "address",
+        name: "_nftMarketPlace",
+        type: "address",
+      },
+      {
         internalType: "uint96",
         name: "_royaltyFeeBips",
         type: "uint96",
@@ -148,9 +153,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "bytes32",
+        internalType: "string",
         name: "credientials",
-        type: "bytes32",
+        type: "string",
       },
     ],
     name: "CredientialsUpdated",
@@ -192,6 +197,25 @@ const _abi = [
       },
     ],
     name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "subscriptionTime",
+        type: "uint256",
+      },
+    ],
+    name: "SubsTimeUpdated",
     type: "event",
   },
   {
@@ -244,6 +268,12 @@ const _abi = [
         indexed: false,
         internalType: "uint256",
         name: "_hour",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_newTime",
         type: "uint256",
       },
       {
@@ -434,9 +464,9 @@ const _abi = [
     name: "getTokenCredentials",
     outputs: [
       {
-        internalType: "bytes32",
+        internalType: "string",
         name: "",
-        type: "bytes32",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -516,7 +546,13 @@ const _abi = [
       },
     ],
     name: "mint",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -615,6 +651,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "s_nftMarketplace",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -835,9 +884,9 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
+        internalType: "string",
         name: "_credentials",
-        type: "bytes32",
+        type: "string",
       },
       {
         internalType: "uint256",

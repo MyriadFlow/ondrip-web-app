@@ -48,6 +48,7 @@ export interface OnDripNFTInterface extends utils.Interface {
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "s_contractOwner()": FunctionFragment;
     "s_mintLive()": FunctionFragment;
+    "s_nftMarketplace()": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -59,7 +60,7 @@ export interface OnDripNFTInterface extends utils.Interface {
     "topUp(uint256)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateTokenCredentials(bytes32,uint256)": FunctionFragment;
+    "updateTokenCredentials(string,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -82,6 +83,7 @@ export interface OnDripNFTInterface extends utils.Interface {
       | "royaltyInfo"
       | "s_contractOwner"
       | "s_mintLive"
+      | "s_nftMarketplace"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
@@ -171,6 +173,10 @@ export interface OnDripNFTInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "s_nftMarketplace",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "safeTransferFrom(address,address,uint256)",
     values: [
       PromiseOrValue<string>,
@@ -226,7 +232,7 @@ export interface OnDripNFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updateTokenCredentials",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -275,6 +281,10 @@ export interface OnDripNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "s_mintLive", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "s_nftMarketplace",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "safeTransferFrom(address,address,uint256)",
     data: BytesLike
   ): Result;
@@ -318,11 +328,12 @@ export interface OnDripNFTInterface extends utils.Interface {
     "AccountMinted(address,uint256,string,uint256,uint256,bytes32,bool)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "CredientialsUpdated(uint256,bytes32)": EventFragment;
+    "CredientialsUpdated(uint256,string)": EventFragment;
     "FundsWithdrawn(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "SubsTimeUpdated(uint256,uint256)": EventFragment;
     "SubscriptionStatus(address,uint256,address,bool)": EventFragment;
-    "SubscriptionUpdate(address,uint256,uint256,address,uint256)": EventFragment;
+    "SubscriptionUpdate(address,uint256,uint256,uint256,address,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
@@ -332,6 +343,7 @@ export interface OnDripNFTInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "CredientialsUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FundsWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SubsTimeUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubscriptionStatus"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubscriptionUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
@@ -412,6 +424,17 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
+export interface SubsTimeUpdatedEventObject {
+  tokenId: BigNumber;
+  subscriptionTime: BigNumber;
+}
+export type SubsTimeUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  SubsTimeUpdatedEventObject
+>;
+
+export type SubsTimeUpdatedEventFilter = TypedEventFilter<SubsTimeUpdatedEvent>;
+
 export interface SubscriptionStatusEventObject {
   _renter: string;
   _tokenID: BigNumber;
@@ -430,11 +453,12 @@ export interface SubscriptionUpdateEventObject {
   _renter: string;
   _tokenID: BigNumber;
   _hour: BigNumber;
+  _newTime: BigNumber;
   _receiver: string;
   _amount: BigNumber;
 }
 export type SubscriptionUpdateEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, BigNumber],
+  [string, BigNumber, BigNumber, BigNumber, string, BigNumber],
   SubscriptionUpdateEventObject
 >;
 
@@ -559,6 +583,8 @@ export interface OnDripNFT extends BaseContract {
 
     s_mintLive(overrides?: CallOverrides): Promise<[boolean]>;
 
+    s_nftMarketplace(overrides?: CallOverrides): Promise<[string]>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -618,7 +644,7 @@ export interface OnDripNFT extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateTokenCredentials(
-      _credentials: PromiseOrValue<BytesLike>,
+      _credentials: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -703,6 +729,8 @@ export interface OnDripNFT extends BaseContract {
 
   s_mintLive(overrides?: CallOverrides): Promise<boolean>;
 
+  s_nftMarketplace(overrides?: CallOverrides): Promise<string>;
+
   "safeTransferFrom(address,address,uint256)"(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
@@ -762,7 +790,7 @@ export interface OnDripNFT extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateTokenCredentials(
-    _credentials: PromiseOrValue<BytesLike>,
+    _credentials: PromiseOrValue<string>,
     _tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -823,7 +851,7 @@ export interface OnDripNFT extends BaseContract {
       _rateAmount: PromiseOrValue<BigNumberish>,
       _renewalFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -846,6 +874,8 @@ export interface OnDripNFT extends BaseContract {
     s_contractOwner(overrides?: CallOverrides): Promise<string>;
 
     s_mintLive(overrides?: CallOverrides): Promise<boolean>;
+
+    s_nftMarketplace(overrides?: CallOverrides): Promise<string>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
@@ -906,7 +936,7 @@ export interface OnDripNFT extends BaseContract {
     ): Promise<void>;
 
     updateTokenCredentials(
-      _credentials: PromiseOrValue<BytesLike>,
+      _credentials: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -954,7 +984,7 @@ export interface OnDripNFT extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "CredientialsUpdated(uint256,bytes32)"(
+    "CredientialsUpdated(uint256,string)"(
       _tokenID?: null,
       credientials?: null
     ): CredientialsUpdatedEventFilter;
@@ -981,6 +1011,15 @@ export interface OnDripNFT extends BaseContract {
       _to?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
+    "SubsTimeUpdated(uint256,uint256)"(
+      tokenId?: null,
+      subscriptionTime?: null
+    ): SubsTimeUpdatedEventFilter;
+    SubsTimeUpdated(
+      tokenId?: null,
+      subscriptionTime?: null
+    ): SubsTimeUpdatedEventFilter;
+
     "SubscriptionStatus(address,uint256,address,bool)"(
       _renter?: PromiseOrValue<string> | null,
       _tokenID?: null,
@@ -994,10 +1033,11 @@ export interface OnDripNFT extends BaseContract {
       _active?: null
     ): SubscriptionStatusEventFilter;
 
-    "SubscriptionUpdate(address,uint256,uint256,address,uint256)"(
+    "SubscriptionUpdate(address,uint256,uint256,uint256,address,uint256)"(
       _renter?: PromiseOrValue<string> | null,
       _tokenID?: null,
       _hour?: null,
+      _newTime?: null,
       _receiver?: PromiseOrValue<string> | null,
       _amount?: null
     ): SubscriptionUpdateEventFilter;
@@ -1005,6 +1045,7 @@ export interface OnDripNFT extends BaseContract {
       _renter?: PromiseOrValue<string> | null,
       _tokenID?: null,
       _hour?: null,
+      _newTime?: null,
       _receiver?: PromiseOrValue<string> | null,
       _amount?: null
     ): SubscriptionUpdateEventFilter;
@@ -1101,6 +1142,8 @@ export interface OnDripNFT extends BaseContract {
 
     s_mintLive(overrides?: CallOverrides): Promise<BigNumber>;
 
+    s_nftMarketplace(overrides?: CallOverrides): Promise<BigNumber>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -1160,7 +1203,7 @@ export interface OnDripNFT extends BaseContract {
     ): Promise<BigNumber>;
 
     updateTokenCredentials(
-      _credentials: PromiseOrValue<BytesLike>,
+      _credentials: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1246,6 +1289,8 @@ export interface OnDripNFT extends BaseContract {
 
     s_mintLive(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    s_nftMarketplace(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -1305,7 +1350,7 @@ export interface OnDripNFT extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateTokenCredentials(
-      _credentials: PromiseOrValue<BytesLike>,
+      _credentials: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
