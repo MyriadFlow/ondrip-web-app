@@ -8,7 +8,11 @@ import Header from "./components/layout/Header";
 import { client } from "./graph-ql";
 import { ApolloProvider } from "@apollo/client";
 import { WalletProvider } from "./contexts/WalletContext";
+import { litEncrypt } from "./lit-app";
 
+litEncrypt("0", "ommax@max.abc", "OnDripToTheMoon").then((e) => {
+  console.log(e);
+});
 function App() {
   return (
     <WalletProvider>
