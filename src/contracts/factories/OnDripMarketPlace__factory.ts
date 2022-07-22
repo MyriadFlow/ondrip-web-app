@@ -14,7 +14,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_onDripNFT",
+        name: "_owner",
         type: "address",
       },
       {
@@ -49,6 +49,12 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "string",
+        name: "metaDataURI",
+        type: "string",
+      },
+      {
+        indexed: false,
         internalType: "address",
         name: "seller",
         type: "address",
@@ -68,11 +74,24 @@ const _abi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "sold",
+        name: "forSale",
         type: "bool",
       },
     ],
     name: "MarketItemCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "itemId",
+        type: "uint256",
+      },
+    ],
+    name: "MarketItemRemoved",
     type: "event",
   },
   {
@@ -109,6 +128,11 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "nftContract",
+        type: "address",
+      },
+      {
         internalType: "uint256",
         name: "tokenId",
         type: "uint256",
@@ -120,8 +144,14 @@ const _abi = [
       },
     ],
     name: "createMarketItem",
-    outputs: [],
-    stateMutability: "payable",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -138,13 +168,54 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "onDripNFT",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "idToMarketItem",
     outputs: [
       {
-        internalType: "contract OnDripNFT",
-        name: "",
+        internalType: "uint256",
+        name: "itemId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "nftContract",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "address payable",
+        name: "seller",
+        type: "address",
+      },
+      {
+        internalType: "address payable",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "forSale",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "deleted",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -152,7 +223,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "payoutAddress",
+    name: "owner",
     outputs: [
       {
         internalType: "address",
@@ -174,6 +245,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "itemId",
+        type: "uint256",
+      },
+    ],
+    name: "removeFromSale",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];
