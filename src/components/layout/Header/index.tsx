@@ -8,15 +8,15 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers } from "ethers";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { WalletContext } from "../../../contexts/WalletContext";
 
 function Header() {
   const walletContext = useContext(WalletContext);
   const [walletAddress, setWalletAddress] = useState("");
+  
   async function updateWalletAddress(signer: providers.JsonRpcSigner) {
     const walletAddress = await signer.getAddress();
     setWalletAddress(walletAddress);
@@ -24,6 +24,10 @@ function Header() {
 
   useEffect(() => {
     if (!walletContext.web3Provider) return;
+
+   
+
+    
 
     const signer = walletContext.web3Provider.getSigner();
     updateWalletAddress(signer);

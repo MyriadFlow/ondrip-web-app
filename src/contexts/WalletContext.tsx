@@ -1,14 +1,13 @@
 import { providers } from "ethers";
 import React, {
-  ReactPropTypes,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { chain, infuraId } from "../env";
 
 type WalletContextType = {
   web3Provider: providers.Web3Provider | undefined;
@@ -21,22 +20,24 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId: "504b80c00c534f598bb3f254e4b9db74",
+      infuraId,
     },
   },
 };
 
 const web3Modal = new Web3Modal({
-  network: "mainnet",
+  network: chain,
   cacheProvider: true,
   providerOptions,
 });
-export function WalletProvider(p: React.PropsWithChildren) {
+
+export function WalletProvider(props: React.PropsWithChildren) {
   const [provider, setProvider] = useState<providers.Web3Provider>();
 
   const getWeb3Provider = useCallback(async () => {
     const wallet = await web3Modal.connect();
     const provider = new providers.Web3Provider(wallet);
+    console.log({provider})
 
     setProvider(provider);
     return provider;
@@ -56,12 +57,15 @@ export function WalletProvider(p: React.PropsWithChildren) {
       console.log({ error });
     }
   }, []);
+
   const value: WalletContextType = useMemo(
     () => ({ web3Provider: provider, clearWallet, getWeb3Provider }),
-    [provider]
+    [provider, clearWallet, getWeb3Provider]
   );
+
   WalletContext = React.createContext(value);
+  
   return (
-    <WalletContext.Provider value={value}>{p.children}</WalletContext.Provider>
+    <WalletContext.Provider value={value}>{props.children}</WalletContext.Provider>
   );
 }
