@@ -8,10 +8,16 @@ function Explore() {
         <Heading fontSize='2xl' my={5}>Your SNFTs</Heading>
 
         <Grid className='card-list' my={3} templateColumns='repeat(4, 1fr)' gap={3}>
-        <Card isUser />
-          <Card isUser />
-          <Card isUser />
-          <Card isUser />
+          <Card 
+            primaryLabel='2 MATIC' 
+            secondaryLabel='Verified'
+            imageSrc ='/netflix.png'
+            primaryButtonLabel='Top Up' 
+            primaryButtonAction={() => console.log('topping up...')}
+            secondaryButtonLabel='Transfer'
+            secondaryButtonAction={() => console.log('transferring...')}
+            isUser 
+          />
         </Grid>
       </Flex>
 
@@ -19,10 +25,13 @@ function Explore() {
         <Heading fontSize='2xl' my={5}>SNFTs in Market</Heading>
 
         <Grid className='card-list' my={3} templateColumns='repeat(4, 1fr)' gap={3}>
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          <Card 
+            primaryLabel='2 MATIC' 
+            secondaryLabel='Verified' 
+            imageSrc ='/netflix.png'
+            primaryButtonLabel='Buy' 
+            primaryButtonAction={() => console.log('buying...')}
+          />
         </Grid>
       </Flex>
     </Box>

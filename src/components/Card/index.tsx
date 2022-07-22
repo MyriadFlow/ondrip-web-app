@@ -1,12 +1,33 @@
-import { Flex, Text, Button, Image, Spacer, Center } from '@chakra-ui/react'
+import { Flex, Text, Button, Image, Spacer } from '@chakra-ui/react'
 
 import './index.css';
 
 type CardProps = {
   isUser?: boolean;
+  primaryLabel: string;
+  secondaryLabel: string;
+  description?: string;
+  descriptionLink?: string;
+  imageSrc: string;
+  primaryButtonLabel: string;
+  primaryButtonAction: () => void;
+  secondaryButtonLabel?: string;
+  secondaryButtonAction?: () => void;
 }
 
-function Card({ isUser }: CardProps) {
+function Card(
+  {
+    isUser,
+    primaryLabel,
+    secondaryLabel,
+    description = 'View owner guidelines',
+    imageSrc,
+    primaryButtonLabel,
+    primaryButtonAction,
+    secondaryButtonLabel,
+    secondaryButtonAction
+  }: CardProps
+) {
   return (
     <Flex className='card'>
       <Flex className='card-header' justifyContent='space-between'>
@@ -17,7 +38,7 @@ function Card({ isUser }: CardProps) {
           color='white'
           backgroundColor='#E50914'
         >
-          2 MATIC
+          {primaryLabel}
         </Button>
         <Button
           className='status'
@@ -27,14 +48,14 @@ function Card({ isUser }: CardProps) {
           color='#227514'
           backgroundColor='white'
         >
-          Verified
+          {secondaryLabel}
         </Button>
       </Flex>
 
       <Flex className='card-body' flexDirection='column' py={5}>
-        <Text color='#797979'>View owner guidelines</Text>
+        <Text color='#797979'>{description}</Text>
 
-        <Image src='/netflix.png' height='56px' />
+        <Image src={imageSrc} height='56px' />
       </Flex>
 
       <Flex className='card-footer' justifyContent='space-between'>
@@ -47,8 +68,9 @@ function Card({ isUser }: CardProps) {
                 borderRadius={25}
                 color='white'
                 backgroundColor='#266011'
+                onClick={primaryButtonAction}
               >
-                Top Up
+                {primaryButtonLabel}
               </Button>
 
               <Spacer />
@@ -59,8 +81,9 @@ function Card({ isUser }: CardProps) {
                 borderRadius={25}
                 color='white'
                 backgroundColor='#266011'
+                onClick={secondaryButtonAction}
               >
-                Transfer
+                {secondaryButtonLabel}
               </Button>
             </>
           )
@@ -73,8 +96,9 @@ function Card({ isUser }: CardProps) {
                 color='white'
                 backgroundColor='#266011'
                 width='90%'
+                onClick={primaryButtonAction}
               >
-                Buy
+                {primaryButtonLabel}
               </Button>
             </Flex>
 
