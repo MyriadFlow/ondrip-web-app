@@ -25,10 +25,6 @@ function Header() {
   useEffect(() => {
     if (!walletContext.web3Provider) return;
 
-   
-
-    
-
     const signer = walletContext.web3Provider.getSigner();
     updateWalletAddress(signer);
   }, [walletContext.web3Provider]);
@@ -57,6 +53,9 @@ function Header() {
           </Link>
           <Link as={RouterLink} to="/create">
             Create
+          </Link>
+          <Link as={RouterLink} to="/profile">
+            Profile
           </Link>
         </HStack>
         {!walletContext.web3Provider ? (

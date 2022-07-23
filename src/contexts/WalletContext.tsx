@@ -37,7 +37,6 @@ export function WalletProvider(props: React.PropsWithChildren) {
   const getWeb3Provider = useCallback(async () => {
     const wallet = await web3Modal.connect();
     const provider = new providers.Web3Provider(wallet);
-    console.log({provider})
 
     setProvider(provider);
     return provider;
