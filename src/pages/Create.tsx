@@ -40,9 +40,9 @@ function Create() {
         </Grid>
       </Flex>
 
-      <CreateModal isOpen={isOpen} onClose={onClose} />
+      {isOpen && (<CreateModal isOpen={isOpen} onClose={onClose} />)}
     </Box>
-  );  
+  );
 } 
 
 export default Create;
