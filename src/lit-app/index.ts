@@ -1,17 +1,17 @@
 import { ethers } from "ethers";
 import LitJsSdk from "lit-js-sdk";
 import { OnDripMarketPlace__factory, OnDripNFT__factory } from "../contracts";
-import { getAccessControlConditions } from "./access-control";
-import { chain } from "./config"
+import { getEvmContractConditions } from "./access-control";
+import { chain } from "../env"
 type SmartContractCreds = {
-    excryptedKey: string, //hex
-    excrypedtedData: string //hex
+    encryptedKey: string, //hex
+    encrypedtedData: string //hex
 }
 
-export async function litEncrypt(tokenId: number, username: string, password: string): Promise<string> {
+export async function litEncrypt(tokenId: string, username: string, password: string): Promise<string> {
     const litClient = new LitJsSdk.LitNodeClient()
     await litClient.connect()
-    const accessControlConditions = getAccessControlConditions(tokenId)
+    const evmContractConditions = getEvmContractConditions(tokenId)
     const authSig = await LitJsSdk.checkAndSignAuthMessage({
         chain,
     });
@@ -25,7 +25,7 @@ export async function litEncrypt(tokenId: number, username: string, password: st
     let encryptedStringAsArrayBuffer = await (encryptedString as Blob).arrayBuffer()
     let encryptedStringAsHex = Buffer.from(encryptedStringAsArrayBuffer).toString("hex")
     const encryptedSymmetricKey = await litClient.saveEncryptionKey({
-        accessControlConditions,
+        evmContractConditions,
         symmetricKey,
         authSig,
         chain,
@@ -34,8 +34,8 @@ export async function litEncrypt(tokenId: number, username: string, password: st
     const encryptedSymmetricKeyHex = Buffer.from(encryptedSymmetricKey).toString("hex")
 
     const litEncryptedPayload: SmartContractCreds = {
-        excrypedtedData: encryptedStringAsHex,
-        excryptedKey: encryptedSymmetricKeyHex
+        encrypedtedData: encryptedStringAsHex,
+        encryptedKey: encryptedSymmetricKeyHex
     }
 
     return JSON.stringify(litEncryptedPayload)
