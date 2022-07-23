@@ -17,7 +17,7 @@ function Home() {
           </ButtonGroup>
         </Flex>
         <Flex grow={1} p={10} className='hero-image'>
-          <Image width={500} src='./featured_nft.jpeg'></Image>
+          <Image src='./featured_nft.jpeg' />
         </Flex>
       </Flex>
 
