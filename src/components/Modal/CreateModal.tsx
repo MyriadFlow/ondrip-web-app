@@ -66,7 +66,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     const res = await mintRes.wait();
     const tokenIdBigNum = res.events?.[0].args?.tokenId as BigNumber;
     const encryptedToken = await litEncrypt(
-      tokenIdBigNum.toNumber(),
+      tokenIdBigNum.toNumber().toString(),
       username,
       password
     );
