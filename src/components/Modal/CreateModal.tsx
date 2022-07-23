@@ -46,19 +46,19 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     if (!signer) return;
 
 
-    const formValues = { selectedService, price, renewalFee, username, password };
-    const nftFactory = OnDripNFT__factory.connect(nftContractAddress, signer);
-    const tokenId = await nftFactory.mint('', 'An NFT Contract', price, renewalFee);
-    console.log({tokenId});
-    const encryptedToken = await litEncrypt(tokenId, username, password);
-    await nftFactory.updateTokenCredentials(encryptedToken, tokenId);
-    // let user know its a success
-    console.log('created nft');
+    // const formValues = { selectedService, price, renewalFee, username, password };
+    // const nftFactory = OnDripNFT__factory.connect(nftContractAddress, signer);
+    // const tokenId = await nftFactory.mint('', 'An NFT Contract', price, renewalFee);
+    // console.log({tokenId});
+    // const encryptedToken = await litEncrypt(tokenId, username, password);
+    // await nftFactory.updateTokenCredentials(encryptedToken, tokenId);
+    // // let user know its a success
+    // console.log('created nft');
 
-    const nftMarketFactory = OnDripMarketPlace__factory.connect(nftMarketPlaceContractAddress, signer);
-    const marketTokenId = await nftMarketFactory.createMarketItem(tokenId, tokenId, price);
-    // let user know its added to marketplace
-    console.log('added nft to market');
+    // const nftMarketFactory = OnDripMarketPlace__factory.connect(nftMarketPlaceContractAddress, signer);
+    // const marketTokenId = await nftMarketFactory.createMarketItem(tokenId, tokenId, price);
+    // // let user know its added to marketplace
+    // console.log('added nft to market');
   };
 
   return (
