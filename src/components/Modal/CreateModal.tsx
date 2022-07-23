@@ -70,10 +70,14 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       username,
       password
     );
-    await nftFactory.updateTokenCredentials(encryptedToken, tokenIdBigNum);
+    await nftFactory
+      .updateTokenCredentials(encryptedToken, tokenIdBigNum)
+      .then((e) => e.wait());
     // let user know its a success
     console.log("created nft");
-
+    await nftFactory
+      .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
+      .then((e) => e.wait());
     const nftMarketFactory = OnDripMarketPlace__factory.connect(
       nftMarketPlaceContractAddress,
       signer
