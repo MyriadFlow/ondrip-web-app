@@ -12,6 +12,7 @@ import { useContext } from "react";
 import Card from "../components/Card";
 import CreateModal from "../components/Modal/CreateModal";
 import { WalletContext } from "../contexts/WalletContext";
+import { services } from "../env";
 import { GET_MARKET_OWNED_TOKENS } from "../graph-ql/queries/GET_MARKET_OWNED_TOKEN/getMarketOwnedTokens";
 import { GetMarketOwnedTokens } from "../graph-ql/queries/GET_MARKET_OWNED_TOKEN/__generated__/GetMarketOwnedTokens";
 // import { GET_OWNED_TOKENS } from "../graph-ql/queries/GET_OWNED_TOKENS/getOwnedTokens";
@@ -67,7 +68,7 @@ function Create() {
                 e.token.rateAmount
               )} MATIC`}
               secondaryLabel="Verified"
-              imageSrc="/netflix.png"
+              imageSrc={services[0].url}
               primaryButtonLabel="Burn"
               primaryButtonAction={() => console.log("burning...")}
               secondaryButtonLabel="Remove from sale"

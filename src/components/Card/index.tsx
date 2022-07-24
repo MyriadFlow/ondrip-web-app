@@ -52,7 +52,7 @@ function Card({
 
       <Flex className="card-body" flexDirection="column" py={5}>
         <Tooltip label={description}>View owner guidelines</Tooltip>
-        <Image src={imageSrc} height="56px" />
+        <Image src={imageSrc} height="64px" objectFit={"contain"} />
       </Flex>
 
       <Flex className="card-footer" justifyContent="space-between">

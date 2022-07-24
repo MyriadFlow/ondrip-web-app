@@ -10,7 +10,11 @@ import {
   OnDripNFT,
   OnDripNFT__factory,
 } from "../contracts";
-import { nftContractAddress, nftMarketPlaceContractAddress } from "../env";
+import {
+  nftContractAddress,
+  nftMarketPlaceContractAddress,
+  services,
+} from "../env";
 import { GET_OWNED_TOKENS } from "../graph-ql/queries/GET_OWNED_TOKENS/getOwnedTokens";
 import { GetOwnedTokens } from "../graph-ql/queries/GET_OWNED_TOKENS/__generated__/GetOwnedTokens";
 import { GET_UNSOLD_TOKENS } from "../graph-ql/queries/GET_UNSOLD_TOKENS/getUnsoldTokens";
@@ -101,7 +105,7 @@ function Explore() {
               description={e.description}
               primaryLabel={`${getHoursSecLeft(e.subsTime)} hrs`}
               secondaryLabel=""
-              imageSrc="/netflix.png"
+              imageSrc={services[0].url}
               primaryButtonLabel={
                 isExpired(e.subsTime)
                   ? `Renew ${weiToMatic(e.renewalFee)} MATIC`
@@ -136,7 +140,7 @@ function Explore() {
               key={i}
               primaryLabel={`${weiToMatic(e.price)} MATIC`}
               secondaryLabel="Verified"
-              imageSrc="/netflix.png"
+              imageSrc={services[0].url}
               primaryButtonLabel="Buy"
               primaryButtonAction={() => buyNFT(e.itemId, e.price)}
             />
