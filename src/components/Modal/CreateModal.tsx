@@ -193,6 +193,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
                   <Image
                     key={i}
                     src={service.url}
+                    height="50px"
                     borderRadius="24px"
                     style={{ cursor: "pointer" }}
                     boxShadow={
