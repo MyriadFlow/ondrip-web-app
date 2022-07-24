@@ -20,10 +20,6 @@ function Home() {
           <Image src='./featured_nft.jpeg' />
         </Flex>
       </Flex>
-
-      <Flex py={10} className='featured'>
-        <Heading fontSize='2xl'>Featured Utilities</Heading>
-      </Flex>
     </>
   );
 }
