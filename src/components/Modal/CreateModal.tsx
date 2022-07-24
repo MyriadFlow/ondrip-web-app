@@ -53,6 +53,8 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     event.preventDefault();
     setError(false);
     setErrorMessage("");
+    setSuccess(false);
+    setSuccessMessage("");
 
     const signer = walletContext.web3Provider?.getSigner();
     if (!signer) {
@@ -83,8 +85,6 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    console.log('NFT Minted', tokenIdBigNum);
-
     // update NFT with credentials
     try {
       const credentialsToken = await litEncrypt(
@@ -100,8 +100,6 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     } catch (e:any) {
       console.log('Lit Error: ', e.message);
     }
-
-    console.log('credential updated');
 
     // add nft to marketplace
     try {
@@ -123,12 +121,12 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    console.log('NFT added ');
-
+    setSalePrice("");
+    setTopUpAmount("");
+    setRenewalFee("");
+    setUsername("");
+    setPassword("");
     setLoading(false);
-    setSuccess(false);
-    setSuccessMessage("");
-    onClose();
   };
 
   return (
