@@ -93,13 +93,26 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
         password
       );
       
-      await nftFactory.updateTokenCredentials(credentialsToken, tokenIdBigNum);
+      await nftFactory
+        .updateTokenCredentials(credentialsToken, tokenIdBigNum)
+        .then((e) => e.wait());
       
       setSuccess(true);
       setSuccessMessage("Minted NFT Successfully");
     } catch (e:any) {
       console.log('Lit Error: ', e.message);
     }
+
+    // Approve NFT Marketplace contract
+    try {
+      await nftFactory
+      .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
+      .then((e) => e.wait());
+    } catch (e:any) {
+      console.log('Marketplace approval error: ', e.message);
+    }
+
+
 
     // add nft to marketplace
     try {
@@ -121,9 +134,9 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    setSalePrice("");
-    setTopUpAmount("");
-    setRenewalFee("");
+    setSalePrice("0");
+    setTopUpAmount("0");
+    setRenewalFee("0");
     setUsername("");
     setPassword("");
     setLoading(false);
