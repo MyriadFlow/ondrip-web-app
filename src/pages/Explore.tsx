@@ -98,6 +98,7 @@ function Explore() {
           {ownedTokensConnection?.subTokens.map((e, i) => (
             <Card
               key={i}
+              description={e.description}
               primaryLabel={`${getHoursSecLeft(e.subsTime)} hrs`}
               secondaryLabel=""
               imageSrc="/netflix.png"
