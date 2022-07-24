@@ -9,6 +9,7 @@ import App from './App';
 import Home from './pages/Home';
 import Create from './pages/Create';
 import Explore from './pages/Explore';
+import Profile from './pages/Profile';
 import { WalletProvider } from "./contexts/WalletContext";
 import { client } from "./graph-ql";
 import reportWebVitals from './reportWebVitals';
@@ -28,6 +29,7 @@ root.render(
                 <Route index element={<Home />} />
                 <Route path='create' element={<Create />} />
                 <Route path='explore' element={<Explore />} />
+                <Route path='profile' element={<Profile />} />
               </Route>
             </Routes>
           </BrowserRouter>

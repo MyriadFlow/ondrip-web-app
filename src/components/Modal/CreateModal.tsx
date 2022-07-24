@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { BigNumber, ethers } from "ethers";
 import { useContext, useState } from "react";
+// import { NFTStorage } from 'nft.storage';
 import { WalletContext } from "../../contexts/WalletContext";
 import {
   OnDripMarketPlace__factory,
@@ -27,6 +28,12 @@ import { nftContractAddress, nftMarketPlaceContractAddress, services } from "../
 import { AuthSig, litEncrypt } from "../../lit-app";
 import { getEip4361Msg } from "../../lit-app/get-eip4361-msg";
 
+// const NFT_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQ0QmI1ZjkyMGM4NDkxNEM3N2IyYzczMTcyRThCMzAwOTA3MDk4NDAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1ODY1ODE0OTQ5NCwibmFtZSI6ImhhY2tmcyJ9.AGGEVH7cS7OMYZZYnR81SGf30anuTe4bmhoSEHr5UFI';
+
+// const storage = new NFTStorage({
+//     endpoint: 'https://api.nft.storage',
+//     token
+// });
 
 type CreateModalProps = {
   isOpen: boolean;
