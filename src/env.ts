@@ -5,8 +5,7 @@ export const infuraId = "504b80c00c534f598bb3f254e4b9db74";
 export const graphQLUri = "https://api.thegraph.com/subgraphs/name/thisisommore/ondrip-subgraph";
 export const nftContractAddress = "0xF261AD3d4a8cc795AC5e2b9616566747b4BD1A72";
 export const nftMarketPlaceContractAddress = "0x3aEF3cA504496e000Fe2aa25F10b4aE34Decb04c";
-
-
+export const NFT_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQ0QmI1ZjkyMGM4NDkxNEM3N2IyYzczMTcyRThCMzAwOTA3MDk4NDAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1ODY1ODE0OTQ5NCwibmFtZSI6ImhhY2tmcyJ9.AGGEVH7cS7OMYZZYnR81SGf30anuTe4bmhoSEHr5UFI';
 export const services = [
   {
     name: "netflix",
@@ -15,5 +14,9 @@ export const services = [
   {
     name: "spotify",
     url: "https://bafkreia2imznounimbmw65mh6y4rjvythkvz4d4tacjsajqyvfxdtyride.ipfs.nftstorage.link/",
+  },
+  {
+    name: "prime",
+    url: "https://bafkreihufty3xzdivult2nnn734xdzvofu55e7t3u34yh5yh3stt6jkauu.ipfs.nftstorage.link/",
   }
 ];

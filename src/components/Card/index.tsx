@@ -1,4 +1,4 @@
-import { Flex, Text, Button, Image, Spacer, Tooltip } from "@chakra-ui/react";
+import { Flex, Button, Image, Spacer, Tooltip } from "@chakra-ui/react";
 
 import "./index.css";
 

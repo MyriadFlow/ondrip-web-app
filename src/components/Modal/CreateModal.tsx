@@ -28,8 +28,6 @@ import { nftContractAddress, nftMarketPlaceContractAddress, services } from "../
 import { AuthSig, litEncrypt } from "../../lit-app";
 import { getEip4361Msg } from "../../lit-app/get-eip4361-msg";
 
-// const NFT_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQ0QmI1ZjkyMGM4NDkxNEM3N2IyYzczMTcyRThCMzAwOTA3MDk4NDAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1ODY1ODE0OTQ5NCwibmFtZSI6ImhhY2tmcyJ9.AGGEVH7cS7OMYZZYnR81SGf30anuTe4bmhoSEHr5UFI';
-
 // const storage = new NFTStorage({
 //     endpoint: 'https://api.nft.storage',
 //     token
@@ -63,7 +61,8 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     setSuccess(false);
     setSuccessMessage("");
 
-    const vendor = services.find(service => service.name === selectedService);
+    let vendorUri = services.find(service => service.name === selectedService)?.url;
+    if (!vendorUri) vendorUri = '';
 
     const signer = walletContext.web3Provider?.getSigner();
     if (!signer) {
@@ -83,15 +82,17 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     try {
       setLoading(true);
       const mintNFT = await nftFactory.mint(
-        vendor?.url || '',
+        vendorUri,
         description,
         topUpAmountWei,
         renewalFeeWei
       );
 
       const response = await mintNFT.wait();
+      console.log(response.events);
       tokenIdBigNum = response.events?.[0].args?.tokenId as BigNumber;
     } catch (e: any) {
+      console.log("Mint Error: ", e);
       setError(true);
       setErrorMessage(e.message);
       setLoading(false);
@@ -136,7 +137,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       setSuccess(true);
       setSuccessMessage("Minted NFT Successfully");
     } catch (e: any) {
-      console.log("Lit Error: ", e.message);
+      console.log("Lit Error: ", e);
     }
 
     // Approve NFT Marketplace contract
@@ -145,7 +146,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
         .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
         .then((e) => e.wait());
     } catch (e: any) {
-      console.log("Marketplace approval error: ", e.message);
+      console.log("Marketplace approval error: ", e);
     }
 
     // add nft to marketplace
@@ -162,6 +163,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       setSuccess(true);
       setSuccessMessage("NFT Added to MarketPlace Successfully");
     } catch (e: any) {
+      console.log("Add to marketplace Error: ", e);
       setError(true);
       setErrorMessage(e.message);
       setLoading(false);

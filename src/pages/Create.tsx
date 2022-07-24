@@ -8,23 +8,24 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Card from "../components/Card";
 import CreateModal from "../components/Modal/CreateModal";
 import { WalletContext } from "../contexts/WalletContext";
 import { GET_MARKET_OWNED_TOKENS } from "../graph-ql/queries/GET_MARKET_OWNED_TOKEN/getMarketOwnedTokens";
 import { GetMarketOwnedTokens } from "../graph-ql/queries/GET_MARKET_OWNED_TOKEN/__generated__/GetMarketOwnedTokens";
-import { GET_OWNED_TOKENS } from "../graph-ql/queries/GET_OWNED_TOKENS/getOwnedTokens";
-import { GetOwnedTokens } from "../graph-ql/queries/GET_OWNED_TOKENS/__generated__/GetOwnedTokens";
+// import { GET_OWNED_TOKENS } from "../graph-ql/queries/GET_OWNED_TOKENS/getOwnedTokens";
+// import { GetOwnedTokens } from "../graph-ql/queries/GET_OWNED_TOKENS/__generated__/GetOwnedTokens";
 
 function Create() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const walletContext = useContext(WalletContext);
+
   const {
     loading: isLoadingMarketOwnedTokens,
     data: marketownedTokensConnection,
     error: marketownedTokensError,
-    refetch: refetchMarketOwnedTokens,
+    // refetch: refetchMarketOwnedTokens,
   } = useQuery<GetMarketOwnedTokens>(GET_MARKET_OWNED_TOKENS, {
     variables: {
       address: walletContext.walletAddress?.toLowerCase(),
@@ -33,6 +34,7 @@ function Create() {
 
   if (isLoadingMarketOwnedTokens) return <h4>Loading</h4>;
   if (marketownedTokensError) return <h3>Error occured</h3>;
+
   return (
     <Box py={5} className="explore">
       <Flex className="user-nfts" flexDirection="column">
