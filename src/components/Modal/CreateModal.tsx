@@ -134,9 +134,9 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    setSalePrice("0");
-    setTopUpAmount("0");
-    setRenewalFee("0");
+    setSalePrice("");
+    setTopUpAmount("");
+    setRenewalFee("");
     setUsername("");
     setPassword("");
     setLoading(false);
@@ -174,11 +174,14 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
             <FormControl mb={2}>
               <FormLabel>Sale Price</FormLabel>
 
-              <NumberInput min={0} precision={2}>
+              <NumberInput 
+                value={salePrice} 
+                onChange={(value) => setSalePrice(value)} 
+                min={0} 
+                precision={2}
+              >
                 <NumberInputField
                   placeholder="In Matic"
-                  value={salePrice}
-                  onChange={(event) => setSalePrice(event.target.value)}
                   required
                 />
               </NumberInput>
@@ -187,11 +190,14 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
             <FormControl mb={2}>
               <FormLabel>Top Up Price</FormLabel>
 
-              <NumberInput min={0} precision={2}>
+              <NumberInput 
+                value={topUpAmount} 
+                onChange={(value) => setTopUpAmount(value)} 
+                min={0} 
+                precision={2}
+              >
                 <NumberInputField
                   placeholder="In Matic"
-                  value={topUpAmount}
-                  onChange={(event) => setTopUpAmount(event.target.value)}
                   required
                 />
               </NumberInput>
@@ -200,11 +206,14 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
             <FormControl mb={2}>
               <FormLabel>Renewal Fee</FormLabel>
 
-              <NumberInput min={0} precision={2}>
+              <NumberInput 
+                value={renewalFee} 
+                onChange={(value) => setRenewalFee(value)} 
+                min={0} 
+                precision={2}
+              >
                 <NumberInputField
                   placeholder="In Matic"
-                  value={renewalFee}
-                  onChange={(event) => setRenewalFee(event.target.value)}
                   required
                 />
               </NumberInput>
