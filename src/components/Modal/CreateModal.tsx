@@ -90,21 +90,27 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
     const walletAddr = await signer.getAddress();
-
     let authSig: AuthSig;
-    const authSignJson = localStorage.getItem("authSig");
-    if (authSignJson) {
-      authSig = JSON.parse(authSignJson);
-    } else {
+
+    const initAuthSig = async (): Promise<AuthSig> => {
       const msg = getEip4361Msg(walletAddr);
       const sig = await signer.signMessage(msg);
-      authSig = {
+      let _authSig = {
         address: walletAddr,
         derivedVia: "web3.personal.sign",
         sig,
         signedMessage: msg,
       };
-      localStorage.setItem("authSig", JSON.stringify(authSig));
+      localStorage.setItem("authSig", JSON.stringify(_authSig));
+      return _authSig;
+    };
+    const authSignJson = localStorage.getItem("authSig");
+    if (authSignJson) {
+      authSig = JSON.parse(authSignJson);
+      if (authSig.address.toLowerCase() != walletAddr.toLowerCase())
+        authSig = await initAuthSig();
+    } else {
+      authSig = await initAuthSig();
     }
     // update NFT with credentials
     try {
