@@ -24,7 +24,11 @@ import {
   OnDripMarketPlace__factory,
   OnDripNFT__factory,
 } from "../../contracts";
-import { nftContractAddress, nftMarketPlaceContractAddress, services } from "../../env";
+import {
+  nftContractAddress,
+  nftMarketPlaceContractAddress,
+  services,
+} from "../../env";
 import { AuthSig, litEncrypt } from "../../lit-app";
 import { getEip4361Msg } from "../../lit-app/get-eip4361-msg";
 
@@ -41,7 +45,7 @@ type CreateModalProps = {
 function CreateModal({ isOpen, onClose }: CreateModalProps) {
   const walletContext = useContext(WalletContext);
 
-  const [selectedService, setSelectedService] = useState("netflix");
+  const [selectedService, setSelectedService] = useState("prime");
   const [salePrice, setSalePrice] = useState("");
   const [topUpAmount, setTopUpAmount] = useState("");
   const [renewalFee, setRenewalFee] = useState("");
@@ -61,8 +65,10 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     setSuccess(false);
     setSuccessMessage("");
 
-    let vendorUri = services.find(service => service.name === selectedService)?.url;
-    if (!vendorUri) vendorUri = '';
+    let vendorUri = services.find(
+      (service) => service.name === selectedService
+    )?.url;
+    if (!vendorUri) vendorUri = "";
 
     const signer = walletContext.web3Provider?.getSigner();
     if (!signer) {
@@ -194,10 +200,11 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
                     key={i}
                     src={service.url}
                     borderRadius="24px"
+                    padding={"10px"}
                     style={{ cursor: "pointer" }}
                     boxShadow={
                       service.name === selectedService
-                        ? "0px 0px 4px 3px #E50914"
+                        ? "0px 0px 4px 3px #00A8E1"
                         : "0px 0px 4px 1px rgba(0, 0, 0, 0.25)"
                     }
                     _hover={{ opacity: 0.4 }}
