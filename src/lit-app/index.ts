@@ -1,6 +1,4 @@
-import { ethers } from "ethers";
 import LitJsSdk from "lit-js-sdk";
-import { OnDripMarketPlace__factory, OnDripNFT__factory } from "../contracts";
 import { getEvmContractConditions } from "./access-control";
 import { chain } from "../env"
 type SmartContractCreds = {

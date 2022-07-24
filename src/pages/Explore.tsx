@@ -5,7 +5,7 @@ import { GET_OWNED_TOKENS } from "../graph-ql/queries/GET_OWNED_TOKENS/getOwnedT
 import { GetOwnedTokens } from "../graph-ql/queries/GET_OWNED_TOKENS/__generated__/GetOwnedTokens";
 import { GET_UNSOLD_TOKENS } from "../graph-ql/queries/GET_UNSOLD_TOKENS/getUnsoldTokens";
 import { GetUnsoldTokens } from "../graph-ql/queries/GET_UNSOLD_TOKENS/__generated__/GetUnsoldTokens";
-import { litEncrypt } from "../lit-app";
+// import { litEncrypt } from "../lit-app";
 
 function Explore() {
   const {

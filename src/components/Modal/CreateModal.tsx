@@ -2,7 +2,6 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   Button,
@@ -15,6 +14,8 @@ import {
   Image,
   NumberInput,
   NumberInputField,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { BigNumber } from "ethers";
 import { useContext, useState } from "react";
@@ -37,63 +38,115 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
   const walletContext = useContext(WalletContext);
 
   const [selectedService, setSelectedService] = useState("netflix");
-  const [price, setPrice] = useState("");
+  const [salePrice, setSalePrice] = useState("");
+  const [topUpAmount, setTopUpAmount] = useState("");
   const [renewalFee, setRenewalFee] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSubmit = async () => {
-    const web3Provider = await walletContext.getWeb3Provider();
-    const signer = web3Provider.getSigner();
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+    setError(false);
+    setErrorMessage("");
+    setSuccess(false);
+    setSuccessMessage("");
 
-    if (!signer) return;
+    const signer = walletContext.web3Provider?.getSigner();
+    if (!signer) {
+      alert("Please connect a wallet...signer not found");
+      return;
+    }
 
-    const formValues = {
-      selectedService,
-      price,
-      renewalFee,
-      username,
-      password,
-    };
     const nftFactory = OnDripNFT__factory.connect(nftContractAddress, signer);
 
-    const mintRes = await nftFactory.mint(
-      "",
-      "An NFT Contract",
-      price,
-      renewalFee
-    );
-    const res = await mintRes.wait();
-    const tokenIdBigNum = res.events?.[0].args?.tokenId as BigNumber;
-    const encryptedToken = await litEncrypt(
-      tokenIdBigNum.toNumber().toString(),
-      username,
-      password
-    );
-    await nftFactory
-      .updateTokenCredentials(encryptedToken, tokenIdBigNum)
-      .then((e) => e.wait());
-    // let user know its a success
-    console.log("created nft");
-    await nftFactory
+    let tokenIdBigNum: BigNumber;
+
+    // mint the NFT
+    try {
+      setLoading(true);
+      const mintNFT = await nftFactory.mint(
+        "",
+        "OnDrip NFT Contract",
+        topUpAmount,
+        renewalFee
+      );
+
+      const response = await mintNFT.wait();
+      tokenIdBigNum = response.events?.[0].args?.tokenId as BigNumber;
+    } catch (e:any) {
+      setError(true);
+      setErrorMessage(e.message);
+      setLoading(false)
+      return;
+    }
+
+    // update NFT with credentials
+    try {
+      const credentialsToken = await litEncrypt(
+        tokenIdBigNum.toNumber().toString(),
+        username,
+        password
+      );
+      
+      await nftFactory
+        .updateTokenCredentials(credentialsToken, tokenIdBigNum)
+        .then((e) => e.wait());
+      
+      setSuccess(true);
+      setSuccessMessage("Minted NFT Successfully");
+    } catch (e:any) {
+      console.log('Lit Error: ', e.message);
+    }
+
+    // Approve NFT Marketplace contract
+    try {
+      await nftFactory
       .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
       .then((e) => e.wait());
-    const nftMarketFactory = OnDripMarketPlace__factory.connect(
-      nftMarketPlaceContractAddress,
-      signer
-    );
-    await nftMarketFactory
-      .createMarketItem(nftContractAddress, tokenIdBigNum, price)
-      .then((e) => e.wait());
-    // let user know its added to marketplace
-    console.log("added nft to market");
+    } catch (e:any) {
+      console.log('Marketplace approval error: ', e.message);
+    }
+
+
+
+    // add nft to marketplace
+    try {
+      const nftMarketFactory = OnDripMarketPlace__factory.connect(
+        nftMarketPlaceContractAddress,
+        signer
+      );
+
+      await nftMarketFactory
+        .createMarketItem(nftContractAddress, tokenIdBigNum, salePrice)
+        .then((e) => e.wait());
+      
+      setSuccess(true);
+      setSuccessMessage("NFT Added to MarketPlace Successfully");
+    } catch (e:any) {
+      setError(true);
+      setErrorMessage(e.message);
+      setLoading(false);
+      return;
+    }
+
+    setSalePrice("");
+    setTopUpAmount("");
+    setRenewalFee("");
+    setUsername("");
+    setPassword("");
+    setLoading(false);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <form>
-        <ModalContent>
+      <ModalContent>
+        <form onSubmit={handleSubmit}>
           <ModalCloseButton />
           <ModalBody px="20px" py="30px">
             <FormControl mb={2}>
@@ -119,13 +172,32 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
             </FormControl>
 
             <FormControl mb={2}>
-              <FormLabel>Top Up Price</FormLabel>
+              <FormLabel>Sale Price</FormLabel>
 
-              <NumberInput min={0} precision={2}>
+              <NumberInput 
+                value={salePrice} 
+                onChange={(value) => setSalePrice(value)} 
+                min={0} 
+                precision={2}
+              >
                 <NumberInputField
                   placeholder="In Matic"
-                  value={price}
-                  onChange={(event) => setPrice(event.target.value)}
+                  required
+                />
+              </NumberInput>
+            </FormControl>
+
+            <FormControl mb={2}>
+              <FormLabel>Top Up Price</FormLabel>
+
+              <NumberInput 
+                value={topUpAmount} 
+                onChange={(value) => setTopUpAmount(value)} 
+                min={0} 
+                precision={2}
+              >
+                <NumberInputField
+                  placeholder="In Matic"
                   required
                 />
               </NumberInput>
@@ -134,11 +206,14 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
             <FormControl mb={2}>
               <FormLabel>Renewal Fee</FormLabel>
 
-              <NumberInput min={0} precision={2}>
+              <NumberInput 
+                value={renewalFee} 
+                onChange={(value) => setRenewalFee(value)} 
+                min={0} 
+                precision={2}
+              >
                 <NumberInputField
                   placeholder="In Matic"
-                  value={renewalFee}
-                  onChange={(event) => setRenewalFee(event.target.value)}
                   required
                 />
               </NumberInput>
@@ -171,21 +246,41 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
               </Text>
 
               <Text fontSize={14}>Use x account or create new account</Text>
+
+              {
+                error && (
+                  <Alert status='error'>
+                    <AlertIcon />
+                    {errorMessage}
+                  </Alert>
+                )
+              }
+
+              {
+                success && (
+                  <Alert status='success'>
+                    <AlertIcon />
+                    {successMessage}
+                  </Alert>
+                )
+              }
             </Flex>
           </ModalBody>
 
-          <ModalFooter p={0}>
+          <Flex>
             <Button
+              type="submit"
               width="100%"
               colorScheme="green"
               borderRadius="none"
-              onClick={handleSubmit}
+              isLoading={loading}
+              loadingText="Minting NFT... Please Wait..."
             >
               Create
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </form>
+          </Flex>
+        </form>
+      </ModalContent>
     </Modal>
   );
 }
