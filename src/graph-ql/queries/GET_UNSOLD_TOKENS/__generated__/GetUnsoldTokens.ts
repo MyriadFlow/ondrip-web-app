@@ -10,6 +10,8 @@
 export interface GetUnsoldTokens_subMarketItems_token {
   __typename: "SubToken";
   id: string;
+  rateAmount: any;
+  description: string;
 }
 
 export interface GetUnsoldTokens_subMarketItems {

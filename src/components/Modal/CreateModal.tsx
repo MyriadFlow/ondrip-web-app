@@ -17,7 +17,7 @@ import {
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useContext, useState } from "react";
 import { WalletContext } from "../../contexts/WalletContext";
 import {
@@ -25,8 +25,8 @@ import {
   OnDripNFT__factory,
 } from "../../contracts";
 import { nftContractAddress, nftMarketPlaceContractAddress } from "../../env";
-import { litEncrypt } from "../../lit-app";
-
+import { AuthSig, litEncrypt } from "../../lit-app";
+import { getEip4361Msg } from "../../lit-app/get-eip4361-msg";
 const services = ["netflix", "spotify"];
 
 type CreateModalProps = {
@@ -43,6 +43,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
   const [renewalFee, setRenewalFee] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -66,53 +67,72 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
 
     let tokenIdBigNum: BigNumber;
 
+    let topUpAmountWei = ethers.utils.parseEther(topUpAmount);
+    let renewalFeeWei = ethers.utils.parseEther(renewalFee);
+    let salePriceWei = ethers.utils.parseEther(salePrice);
+
     // mint the NFT
     try {
       setLoading(true);
       const mintNFT = await nftFactory.mint(
         "",
-        "OnDrip NFT Contract",
-        topUpAmount,
-        renewalFee
+        description,
+        topUpAmountWei,
+        renewalFeeWei
       );
 
       const response = await mintNFT.wait();
       tokenIdBigNum = response.events?.[0].args?.tokenId as BigNumber;
-    } catch (e:any) {
+    } catch (e: any) {
       setError(true);
       setErrorMessage(e.message);
-      setLoading(false)
+      setLoading(false);
       return;
     }
+    const walletAddr = await signer.getAddress();
 
+    let authSig: AuthSig;
+    const authSignJson = localStorage.getItem("authSig");
+    if (authSignJson) {
+      authSig = JSON.parse(authSignJson);
+    } else {
+      const msg = getEip4361Msg(walletAddr);
+      const sig = await signer.signMessage(msg);
+      authSig = {
+        address: walletAddr,
+        derivedVia: "web3.personal.sign",
+        sig,
+        signedMessage: msg,
+      };
+      localStorage.setItem("authSig", JSON.stringify(authSig));
+    }
     // update NFT with credentials
     try {
       const credentialsToken = await litEncrypt(
+        authSig,
         tokenIdBigNum.toNumber().toString(),
         username,
         password
       );
-      
+
       await nftFactory
         .updateTokenCredentials(credentialsToken, tokenIdBigNum)
         .then((e) => e.wait());
-      
+
       setSuccess(true);
       setSuccessMessage("Minted NFT Successfully");
-    } catch (e:any) {
-      console.log('Lit Error: ', e.message);
+    } catch (e: any) {
+      console.log("Lit Error: ", e.message);
     }
 
     // Approve NFT Marketplace contract
     try {
       await nftFactory
-      .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
-      .then((e) => e.wait());
-    } catch (e:any) {
-      console.log('Marketplace approval error: ', e.message);
+        .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
+        .then((e) => e.wait());
+    } catch (e: any) {
+      console.log("Marketplace approval error: ", e.message);
     }
-
-
 
     // add nft to marketplace
     try {
@@ -122,12 +142,12 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
       );
 
       await nftMarketFactory
-        .createMarketItem(nftContractAddress, tokenIdBigNum, salePrice)
+        .createMarketItem(nftContractAddress, tokenIdBigNum, salePriceWei)
         .then((e) => e.wait());
-      
+
       setSuccess(true);
       setSuccessMessage("NFT Added to MarketPlace Successfully");
-    } catch (e:any) {
+    } catch (e: any) {
       setError(true);
       setErrorMessage(e.message);
       setLoading(false);
@@ -174,48 +194,39 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
             <FormControl mb={2}>
               <FormLabel>Sale Price</FormLabel>
 
-              <NumberInput 
-                value={salePrice} 
-                onChange={(value) => setSalePrice(value)} 
-                min={0} 
+              <NumberInput
+                value={salePrice}
+                onChange={(value) => setSalePrice(value)}
+                min={0}
                 precision={2}
               >
-                <NumberInputField
-                  placeholder="In Matic"
-                  required
-                />
+                <NumberInputField placeholder="In Matic" required />
               </NumberInput>
             </FormControl>
 
             <FormControl mb={2}>
               <FormLabel>Top Up Price</FormLabel>
 
-              <NumberInput 
-                value={topUpAmount} 
-                onChange={(value) => setTopUpAmount(value)} 
-                min={0} 
+              <NumberInput
+                value={topUpAmount}
+                onChange={(value) => setTopUpAmount(value)}
+                min={0}
                 precision={2}
               >
-                <NumberInputField
-                  placeholder="In Matic"
-                  required
-                />
+                <NumberInputField placeholder="In Matic" required />
               </NumberInput>
             </FormControl>
 
             <FormControl mb={2}>
               <FormLabel>Renewal Fee</FormLabel>
 
-              <NumberInput 
-                value={renewalFee} 
-                onChange={(value) => setRenewalFee(value)} 
-                min={0} 
+              <NumberInput
+                value={renewalFee}
+                onChange={(value) => setRenewalFee(value)}
+                min={0}
                 precision={2}
               >
-                <NumberInputField
-                  placeholder="In Matic"
-                  required
-                />
+                <NumberInputField placeholder="In Matic" required />
               </NumberInput>
             </FormControl>
 
@@ -241,29 +252,29 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
             </FormControl>
 
             <Flex flexDirection="column">
-              <Text fontSize="1xl" mb={3}>
-                User guidelines
-              </Text>
+              <FormLabel>Description</FormLabel>
 
-              <Text fontSize={14}>Use x account or create new account</Text>
+              <Input
+                placeholder="Use abc account"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                required
+                me={2}
+              />
 
-              {
-                error && (
-                  <Alert status='error'>
-                    <AlertIcon />
-                    {errorMessage}
-                  </Alert>
-                )
-              }
+              {error && (
+                <Alert status="error">
+                  <AlertIcon />
+                  {errorMessage}
+                </Alert>
+              )}
 
-              {
-                success && (
-                  <Alert status='success'>
-                    <AlertIcon />
-                    {successMessage}
-                  </Alert>
-                )
-              }
+              {success && (
+                <Alert status="success">
+                  <AlertIcon />
+                  {successMessage}
+                </Alert>
+              )}
             </Flex>
           </ModalBody>
 

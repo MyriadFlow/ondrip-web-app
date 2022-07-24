@@ -10,6 +10,8 @@ export const GET_UNSOLD_TOKENS = gql`
     seller
     token{
       id
+      rateAmount
+      description
     }
   }
 }`

@@ -6,13 +6,17 @@ type SmartContractCreds = {
     encrypedtedData: string //hex
 }
 
-export async function litEncrypt(tokenId: string, username: string, password: string): Promise<string> {
+export type AuthSig = {
+    sig: string,// hex
+    derivedVia: string,
+    signedMessage: string,
+    address: string
+}
+
+export async function litEncrypt(authSig: AuthSig, tokenId: string, username: string, password: string): Promise<string> {
     const litClient = new LitJsSdk.LitNodeClient()
     await litClient.connect()
     const evmContractConditions = getEvmContractConditions(tokenId)
-    const authSig = await LitJsSdk.checkAndSignAuthMessage({
-        chain,
-    });
 
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
         JSON.stringify({

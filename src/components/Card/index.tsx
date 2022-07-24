@@ -1,6 +1,6 @@
-import { Flex, Text, Button, Image, Spacer } from '@chakra-ui/react'
+import { Flex, Text, Button, Image, Spacer, Tooltip } from "@chakra-ui/react";
 
-import './index.css';
+import "./index.css";
 
 type CardProps = {
   isUser?: boolean;
@@ -13,97 +13,90 @@ type CardProps = {
   primaryButtonAction: () => void;
   secondaryButtonLabel?: string;
   secondaryButtonAction?: () => void;
-}
+};
 
-function Card(
-  {
-    isUser,
-    primaryLabel,
-    secondaryLabel,
-    description = 'View owner guidelines',
-    imageSrc,
-    primaryButtonLabel,
-    primaryButtonAction,
-    secondaryButtonLabel,
-    secondaryButtonAction
-  }: CardProps
-) {
+function Card({
+  isUser,
+  primaryLabel,
+  secondaryLabel,
+  description,
+  imageSrc,
+  primaryButtonLabel,
+  primaryButtonAction,
+  secondaryButtonLabel,
+  secondaryButtonAction,
+}: CardProps) {
   return (
-    <Flex className='card'>
-      <Flex className='card-header' justifyContent='space-between'>
+    <Flex className="card">
+      <Flex className="card-header" justifyContent="space-between">
         <Button
-          className='price'
-          size='xs'
+          className="price"
+          size="xs"
           borderRadius={25}
-          color='white'
-          backgroundColor='#E50914'
+          color="white"
+          backgroundColor="#E50914"
         >
           {primaryLabel}
         </Button>
         <Button
-          className='status'
-          size='xs'
+          className="status"
+          size="xs"
           borderRadius={25}
-          border='1px solid #227514'
-          color='#227514'
-          backgroundColor='white'
+          border="1px solid #227514"
+          color="#227514"
+          backgroundColor="white"
         >
           {secondaryLabel}
         </Button>
       </Flex>
 
-      <Flex className='card-body' flexDirection='column' py={5}>
-        <Text color='#797979'>{description}</Text>
-
-        <Image src={imageSrc} height='56px' />
+      <Flex className="card-body" flexDirection="column" py={5}>
+        <Tooltip label={description}>View owner guidelines</Tooltip>
+        <Image src={imageSrc} height="56px" />
       </Flex>
 
-      <Flex className='card-footer' justifyContent='space-between'>
-        {isUser ?
-          (
-            <>
-              <Button
-                className='action'
-                size='sm'
-                borderRadius={25}
-                color='white'
-                backgroundColor='#266011'
-                onClick={primaryButtonAction}
-              >
-                {primaryButtonLabel}
-              </Button>
+      <Flex className="card-footer" justifyContent="space-between">
+        {isUser ? (
+          <>
+            <Button
+              className="action"
+              size="sm"
+              borderRadius={25}
+              color="white"
+              backgroundColor="#266011"
+              onClick={primaryButtonAction}
+            >
+              {primaryButtonLabel}
+            </Button>
 
-              <Spacer />
+            <Spacer />
 
-              <Button
-                className='action'
-                size='sm'
-                borderRadius={25}
-                color='white'
-                backgroundColor='#266011'
-                onClick={secondaryButtonAction}
-              >
-                {secondaryButtonLabel}
-              </Button>
-            </>
-          )
-          : (
-            <Flex justifyContent='center' width='100%'>
-              <Button
-                className='action'
-                size='sm'
-                borderRadius={25}
-                color='white'
-                backgroundColor='#266011'
-                width='90%'
-                onClick={primaryButtonAction}
-              >
-                {primaryButtonLabel}
-              </Button>
-            </Flex>
-
-          )}
-
+            <Button
+              className="action"
+              size="sm"
+              borderRadius={25}
+              color="white"
+              backgroundColor="#266011"
+              onClick={secondaryButtonAction}
+            >
+              {secondaryButtonLabel}
+            </Button>
+          </>
+        ) : (
+          <Flex justifyContent="center" width="100%">
+            <Button
+              className="action"
+              size="sm"
+              borderRadius={25}
+              color="white"
+              backgroundColor="#266011"
+              width="90%"
+              onClick={primaryButtonAction}
+            >
+              {primaryButtonLabel}
+            </Button>
+          </Flex>
+        )}
       </Flex>
     </Flex>
   );
