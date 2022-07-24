@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Box, Flex, Grid, Heading } from "@chakra-ui/react";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { useContext, useEffect, useRef } from "react";
 import Card from "../components/Card";
 import { WalletContext } from "../contexts/WalletContext";
@@ -24,7 +24,7 @@ function Explore() {
     loading: isLoadingOwnedTokens,
     data: ownedTokensConnection,
     error: ownedTokensError,
-    refetch: refetchOwnedTokens,
+    // refetch: refetchOwnedTokens,
   } = useQuery<GetOwnedTokens>(GET_OWNED_TOKENS, {
     variables: {
       address: walletContext.walletAddress.toLowerCase(),
@@ -32,6 +32,7 @@ function Explore() {
   });
   let onDripNft = useRef<OnDripNFT>();
   let onDripMarketplace = useRef<OnDripMarketPlace>();
+
   useEffect(() => {
     const signer = walletContext.web3Provider?.getSigner();
 
@@ -72,10 +73,10 @@ function Explore() {
     });
   };
   const {
-    loading: isLoadingUnsoldTokens,
+    // loading: isLoadingUnsoldTokens,
     data: unsoldTokensConnection,
-    error: unsoldTokensError,
-    refetch: refetchUnsoldTokens,
+    // error: unsoldTokensError,
+    // refetch: refetchUnsoldTokens,
   } = useQuery<GetUnsoldTokens>(GET_UNSOLD_TOKENS);
 
   if (isLoadingOwnedTokens) return <h4>Loading</h4>;
