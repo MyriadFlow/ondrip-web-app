@@ -9,7 +9,6 @@ import {
   FormLabel,
   Input,
   Flex,
-  Text,
   Grid,
   Image,
   NumberInput,
@@ -19,15 +18,22 @@ import {
 } from "@chakra-ui/react";
 import { BigNumber, ethers } from "ethers";
 import { useContext, useState } from "react";
+// import { NFTStorage } from 'nft.storage';
 import { WalletContext } from "../../contexts/WalletContext";
 import {
   OnDripMarketPlace__factory,
   OnDripNFT__factory,
 } from "../../contracts";
-import { nftContractAddress, nftMarketPlaceContractAddress } from "../../env";
+import { nftContractAddress, nftMarketPlaceContractAddress, services } from "../../env";
 import { AuthSig, litEncrypt } from "../../lit-app";
 import { getEip4361Msg } from "../../lit-app/get-eip4361-msg";
-const services = ["netflix", "spotify"];
+
+// const NFT_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQ0QmI1ZjkyMGM4NDkxNEM3N2IyYzczMTcyRThCMzAwOTA3MDk4NDAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1ODY1ODE0OTQ5NCwibmFtZSI6ImhhY2tmcyJ9.AGGEVH7cS7OMYZZYnR81SGf30anuTe4bmhoSEHr5UFI';
+
+// const storage = new NFTStorage({
+//     endpoint: 'https://api.nft.storage',
+//     token
+// });
 
 type CreateModalProps = {
   isOpen: boolean;
@@ -57,6 +63,8 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     setSuccess(false);
     setSuccessMessage("");
 
+    const vendor = services.find(service => service.name === selectedService);
+
     const signer = walletContext.web3Provider?.getSigner();
     if (!signer) {
       alert("Please connect a wallet...signer not found");
@@ -75,7 +83,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     try {
       setLoading(true);
       const mintNFT = await nftFactory.mint(
-        "",
+        vendor?.url || '',
         description,
         topUpAmountWei,
         renewalFeeWei
@@ -107,7 +115,7 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
     const authSignJson = localStorage.getItem("authSig");
     if (authSignJson) {
       authSig = JSON.parse(authSignJson);
-      if (authSig.address.toLowerCase() != walletAddr.toLowerCase())
+      if (authSig.address.toLowerCase() !== walletAddr.toLowerCase())
         authSig = await initAuthSig();
     } else {
       authSig = await initAuthSig();
@@ -182,16 +190,16 @@ function CreateModal({ isOpen, onClose }: CreateModalProps) {
                 {services.map((service, i) => (
                   <Image
                     key={i}
-                    src={`/${service}.png`}
+                    src={service.url}
                     borderRadius="24px"
                     style={{ cursor: "pointer" }}
                     boxShadow={
-                      service === selectedService
+                      service.name === selectedService
                         ? "0px 0px 4px 3px #E50914"
                         : "0px 0px 4px 1px rgba(0, 0, 0, 0.25)"
                     }
                     _hover={{ opacity: 0.4 }}
-                    onClick={() => setSelectedService(service)}
+                    onClick={() => setSelectedService(service.name)}
                   />
                 ))}
               </Grid>
