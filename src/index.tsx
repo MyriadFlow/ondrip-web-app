@@ -10,6 +10,10 @@ import Home from './pages/Home';
 import Create from './pages/Create';
 import Explore from './pages/Explore';
 import Profile from './pages/Profile';
+import SubscriptionHolder from './pages/SubscriptionHolder';
+import Vendor from './pages/Vendor';
+import Saas from './pages/Saas';
+import DirectLicense from './pages/DirectLicense';
 import { WalletProvider } from "./contexts/WalletContext";
 import { client } from "./graph-ql";
 import reportWebVitals from './reportWebVitals';
@@ -30,6 +34,10 @@ root.render(
                 <Route path='create' element={<Create />} />
                 <Route path='explore' element={<Explore />} />
                 <Route path='profile' element={<Profile />} />
+                <Route path='subscriptionHolder' element={<SubscriptionHolder />} />
+                <Route path='vendor' element={<Vendor />} />
+                <Route path='saas' element={<Saas />} />
+                <Route path='directLicense' element={<DirectLicense />} />
               </Route>
             </Routes>
           </BrowserRouter>
