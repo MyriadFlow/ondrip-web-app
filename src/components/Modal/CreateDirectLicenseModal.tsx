@@ -23,6 +23,7 @@ import { WalletContext } from "../../contexts/WalletContext";
 import {
   OnDripMarketPlace__factory,
   OnDripNFT__factory,
+  OnDripDirectLicense__factory,
 } from "../../contracts";
 import {
   nftContractAddress,
@@ -76,7 +77,7 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    const nftFactory = OnDripNFT__factory.connect(nftContractAddress, signer);
+    const nftFactory = OnDripDirectLicense__factory.connect(nftContractAddress, signer);
 
     let tokenIdBigNum: BigNumber;
 
@@ -89,9 +90,7 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
       setLoading(true);
       const mintNFT = await nftFactory.mint(
         vendorUri,
-        description,
-        topUpAmountWei,
-        renewalFeeWei
+        description
       );
 
       const response = await mintNFT.wait();
