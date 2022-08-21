@@ -12,3 +12,21 @@ export const services = [
         url: "https://bafkreihufty3xzdivult2nnn734xdzvofu55e7t3u34yh5yh3stt6jkauu.ipfs.nftstorage.link/",
     }
 ];
+export const coupons = [
+    {
+        name: "prime",
+        url: "https://burtbrothers.com/images/coupons/coupons-10-2020.jpg",
+    }
+];
+export const mcDonalds = [
+    {
+        name: "prime",
+        url: "https://lassencofair.files.wordpress.com/2015/03/mcdonalds-logo.png",
+    }
+];
+export const BigMacNFT = [
+    {
+        name: "prime",
+        url: "https://www.kiis1011.com.au/wp-content/uploads/sites/3/2019/12/Grand-Big-Mac_2019.png?crop=0",
+    }
+];
