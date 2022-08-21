@@ -12,13 +12,29 @@ import {
 } from "@chakra-ui/react";
   import CreateSaasModal from "../components/Modal/CreateSaasModal";
   import CreateContractModal from "../components/Modal/CreateContractModal";
-  import { mcDonalds } from "../env";
+  import { mcDonalds, services } from "../env";
 import SaasMintPage from "./SaasMintPage";
-import { Link as RouterLink } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { Link as RouterLink, useHref } from 'react-router-dom'
 import Header from "../components/layout/Header";
-
+import Card from "../components/Card";
+import CardSaas from "../components/CardSaas";
+type tCollection = {
+  vendorUri: string;
+  description: string;
+  topUpAmountWei:string;
+  renewalFeeWei: number;
+};
 function Saas() {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [collections, setCollections] = useState<tCollection[]>([]);
+    useEffect(() => {
+      const _collections = JSON.parse(
+        localStorage.getItem("saasCollections") ?? "[]"
+      ) as tCollection[];
+      setCollections(_collections);
+    }, []);
 
   return (
     <Box py={5} className="profile">
@@ -65,7 +81,7 @@ function Saas() {
                     <Box py={1} className="items">
                     <LinkOverlay _hover={{ opacity: 0.4 }}  as={RouterLink} to='/saasMintPage'>
                     
-                    <Image
+                    {/* <Image
                       key={i}
                       src={service.url}
                       height="100px"
@@ -74,7 +90,7 @@ function Saas() {
                       style={{ cursor: "pointer" }}
                       _hover={{ opacity: 0.4 }}    
                       //onClick={as={RouterLink} to='/saasMintPage'}             
-                    />
+                    /> */}
                     </LinkOverlay>
                     </Box>
                   ))}
@@ -84,6 +100,25 @@ function Saas() {
               </Box>
               </Flex>
               </Flex>
+              <Grid
+          className="card-list"
+          my={3}
+          templateColumns="repeat(4, 1fr)"
+          gap={3}
+        >
+          {collections.map((e, i) => (
+            <CardSaas
+              key={i}
+              imageSrc={mcDonalds[0].url}
+              primaryLabel={e.vendorUri}
+              secondaryLabel={e.description}
+              primaryButtonLabel="Mint"
+              primaryButtonAction={() => <RouterLink to='/saasMintPage'></RouterLink>}
+              secondaryButtonLabel={e.renewalFeeWei + " Renewal"}
+              isUser
+            />
+          ))}
+        </Grid>
           <Button
             onClick={onOpen}
             backgroundColor="#266011"
@@ -93,7 +128,7 @@ function Saas() {
             px={8}
             as={RouterLink} to='/saasMintPage'
           > 
-            Go to Smart Contract
+            Go to Saas Mint Page
           </Button>
           {isOpen && <RouterLink to='/saasMintPage'> </RouterLink>}
           

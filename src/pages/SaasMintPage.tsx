@@ -36,7 +36,7 @@ function SaasMintPage() {
           </Flex>
           {isOpen && <CreateSaasModal isOpen={isOpen} onClose={onClose} />}
           <FormControl mb={2}>
-                <FormLabel>Create Contract/Collection</FormLabel>
+                <FormLabel>Big Mac NFT</FormLabel>
   
                 <Grid templateColumns="repeat(4, 100px)" gap={4}>
                   {BigMacNFT.map((service, i) => (
@@ -54,7 +54,6 @@ function SaasMintPage() {
                 </Grid>
               </FormControl>
           <Button
-            onClick={onOpen}
             backgroundColor="#266011"
             color="white"
             size="sm"

@@ -34,6 +34,7 @@ import {
   import { AuthSig, litEncrypt } from "../../lit-app";
   import { getEip4361Msg } from "../../lit-app/get-eip4361-msg";
 
+  import { symbolName } from "typescript";
 
   import { Link as RouterLink } from 'react-router-dom'
 
@@ -48,14 +49,22 @@ import {
     isOpen: boolean;
     onClose: () => void;
   };
+
+  type tCollection = {
+    vendorUri: string;
+    description: string;
+    topUpAmountWei:string;
+    renewalFeeWei: number;
+  };
+  
   
   function CreateContractModal({ isOpen, onClose }: CreateModalProps) {
     const walletContext = useContext(WalletContext);
   
     const [selectedService, setSelectedService] = useState("prime");
     const [salePrice, setSalePrice] = useState("");
-    const [topUpAmount, setTopUpAmount] = useState("");
-    const [renewalFee, setRenewalFee] = useState("");
+    const [topUpAmountWei, setTopUpAmount] = useState("");
+    const [renewalFeeWei, setRenewalFee] = useState(1);
     const [name, setName] = useState("");
     const [symbol, setSymbol] = useState("");
     const [password, setPassword] = useState("");
@@ -65,6 +74,7 @@ import {
     const [errorMessage, setErrorMessage] = useState("");
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
+    const [vendorUri, setVendorUri] = useState("");
   
     const handleSubmit = async (event: any) => {
       event.preventDefault();
@@ -84,112 +94,133 @@ import {
         return;
       }
   
-      const nftFactory = OnDripSaas__factory.connect(nftContractAddress, signer);
+      // const nftFactory = OnDripSaas__factory.connect(nftContractAddress, signer);
   
-      let tokenIdBigNum: BigNumber;
+      // let tokenIdBigNum: BigNumber;
   
-      let topUpAmountWei = ethers.utils.parseEther(topUpAmount);
-      let renewalFeeWei = ethers.utils.parseEther(renewalFee);
-      let salePriceWei = ethers.utils.parseEther(salePrice);
+      // let topUpAmountWei = ethers.utils.parseEther(topUpAmount);
+      // let renewalFeeWei = ethers.utils.parseEther(renewalFee);
+      // let salePriceWei = ethers.utils.parseEther(salePrice);
   
-      // mint the NFT
-      try {
-        setLoading(true);
-        const mintNFT = await nftFactory.mint(
-          vendorUri,
-          description,
-          topUpAmountWei,
-          renewalFeeWei
-        );
+      // // mint the NFT
+      // try {
+      //   setLoading(true);
+      //   const mintNFT = await nftFactory.mint(
+      //     vendorUri,
+      //     description,
+      //     topUpAmountWei,
+      //     renewalFeeWei
+      //   );
   
-        const response = await mintNFT.wait();
-        console.log(response.events);
-        tokenIdBigNum = response.events?.[0].args?.tokenId as BigNumber;
-      } catch (e: any) {
-        console.log("Mint Error: ", e);
-        setError(true);
-        setErrorMessage(e.message);
-        setLoading(false);
-        return;
-      }
-      const walletAddr = await signer.getAddress();
-      let authSig: AuthSig;
+      //   const response = await mintNFT.wait();
+      //   console.log(response.events);
+      //   tokenIdBigNum = response.events?.[0].args?.tokenId as BigNumber;
+      // } catch (e: any) {
+      //   console.log("Mint Error: ", e);
+      //   setError(true);
+      //   setErrorMessage(e.message);
+      //   setLoading(false);
+      //   return;
+      // }
+      // const walletAddr = await signer.getAddress();
+      // let authSig: AuthSig;
   
-      const initAuthSig = async (): Promise<AuthSig> => {
-        const msg = getEip4361Msg(walletAddr);
-        const sig = await signer.signMessage(msg);
-        let _authSig = {
-          address: walletAddr,
-          derivedVia: "web3.personal.sign",
-          sig,
-          signedMessage: msg,
-        };
-        localStorage.setItem("authSig", JSON.stringify(_authSig));
-        return _authSig;
-      };
-      const authSignJson = localStorage.getItem("authSig");
-      if (authSignJson) {
-        authSig = JSON.parse(authSignJson);
-        if (authSig.address.toLowerCase() !== walletAddr.toLowerCase())
-          authSig = await initAuthSig();
-      } else {
-        authSig = await initAuthSig();
-      }
-      // update NFT with credentials
-      try {
-        const credentialsToken = await litEncrypt(
-          authSig,
-          tokenIdBigNum.toNumber().toString(),
-          name,
-          password
-        );
+      // const initAuthSig = async (): Promise<AuthSig> => {
+      //   const msg = getEip4361Msg(walletAddr);
+      //   const sig = await signer.signMessage(msg);
+      //   let _authSig = {
+      //     address: walletAddr,
+      //     derivedVia: "web3.personal.sign",
+      //     sig,
+      //     signedMessage: msg,
+      //   };
+      //   localStorage.setItem("authSig", JSON.stringify(_authSig));
+      //   return _authSig;
+      // };
+      // const authSignJson = localStorage.getItem("authSig");
+      // if (authSignJson) {
+      //   authSig = JSON.parse(authSignJson);
+      //   if (authSig.address.toLowerCase() !== walletAddr.toLowerCase())
+      //     authSig = await initAuthSig();
+      // } else {
+      //   authSig = await initAuthSig();
+      // }
+      // // update NFT with credentials
+      // try {
+      //   const credentialsToken = await litEncrypt(
+      //     authSig,
+      //     tokenIdBigNum.toNumber().toString(),
+      //     name,
+      //     password
+      //   );
   
-        await nftFactory
-          .updateTokenCredentials(credentialsToken, tokenIdBigNum)
-          .then((e) => e.wait());
+      //   await nftFactory
+      //     .updateTokenCredentials(credentialsToken, tokenIdBigNum)
+      //     .then((e) => e.wait());
   
-        setSuccess(true);
-        setSuccessMessage("Minted NFT Successfully");
-      } catch (e: any) {
-        console.log("Lit Error: ", e);
-      }
+      //   setSuccess(true);
+      //   setSuccessMessage("Minted NFT Successfully");
+      // } catch (e: any) {
+      //   console.log("Lit Error: ", e);
+      // }
   
       // Approve NFT Marketplace contract
-      try {
-        await nftFactory
-          .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
-          .then((e) => e.wait());
-      } catch (e: any) {
-        console.log("Marketplace approval error: ", e);
-      }
+      // try {
+      //   await nftFactory
+      //     .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
+      //     .then((e) => e.wait());
+      // } catch (e: any) {
+      //   console.log("Marketplace approval error: ", e);
+      // }
   
-      // add nft to marketplace
-      try {
-        const nftMarketFactory = OnDripMarketPlace__factory.connect(
-          nftMarketPlaceContractAddress,
-          signer
-        );
+      // // add nft to marketplace
+      // try {
+      //   const nftMarketFactory = OnDripMarketPlace__factory.connect(
+      //     nftMarketPlaceContractAddress,
+      //     signer
+      //   );
   
-        await nftMarketFactory
-          .createMarketItem(nftContractAddress, tokenIdBigNum, salePriceWei)
-          .then((e) => e.wait());
+      //   await nftMarketFactory
+      //     .createMarketItem(nftContractAddress, tokenIdBigNum, salePriceWei)
+      //     .then((e) => e.wait());
   
-        setSuccess(true);
-        setSuccessMessage("NFT Added to MarketPlace Successfully");
-      } catch (e: any) {
-        console.log("Add to marketplace Error: ", e);
-        setError(true);
-        setErrorMessage(e.message);
-        setLoading(false);
-        return;
-      }
-  
+      //   setSuccess(true);
+      //   setSuccessMessage("NFT Added to MarketPlace Successfully");
+      // } catch (e: any) {
+      //   console.log("Add to marketplace Error: ", e);
+      //   setError(true);
+      //   setErrorMessage(e.message);
+      //   setLoading(false);
+      //   return;
+      // }
+      const _collections = JSON.parse(
+        localStorage.getItem("saasCollections") ?? "[]"
+      ) as tCollection[];
+      const _collection: tCollection = {
+        vendorUri,
+        description,
+        topUpAmountWei,
+        renewalFeeWei
+      };
+      _collections.push(_collection);
+
+      localStorage.setItem("saasCollections", JSON.stringify(_collections));
+      setLoading(true);
+
+      setTimeout(() => {
+      setLoading(false);
+      setSuccess(true);
+      setSuccessMessage("Collection succefully added");
+
       setSalePrice("");
       setTopUpAmount("");
-      setRenewalFee("");
+      setRenewalFee(1);
       setName("");
       setPassword("");
       setLoading(false);
+      setPassword("");
+    }, 2000);
+     
     };
 
     return (
@@ -225,12 +256,12 @@ import {
               </FormControl>
   
               <FormControl mb={2}>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>VendorURI</FormLabel>
                 <Flex justifyContent="space-between">
                   <Input
                     placeholder="Contract Name"
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
+                    value={vendorUri}
+                    onChange={(event) => setVendorUri(event.target.value)}
                     required
                     me={2}
                   />
@@ -240,15 +271,51 @@ import {
               </FormControl>
   
               <Flex flexDirection="column">
-              <FormLabel>Symbol</FormLabel>
+              <FormLabel>Description</FormLabel>
                   <Input
-                    placeholder="Contract Symbol"
-                    value={symbol}
-                    onChange={(event) => setSymbol(event.target.value)}
+                    placeholder="Contract Description"
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
                     required
                     ms={2}
                   />
               </Flex>
+              <Flex flexDirection="column">
+              <FormLabel>Top Up Amount of Wei</FormLabel>
+                  <Input
+                    placeholder="Contract Description"
+                    value={topUpAmountWei}
+                    onChange={(event) => setTopUpAmount(event.target.value)}
+                    required
+                    ms={2}
+                  />
+              </Flex>
+              <Flex flexDirection="column">
+              <FormLabel>Renewal Fee in Wei</FormLabel>
+                  <Input
+                    placeholder="Contract Description"
+                    value={renewalFeeWei}
+                    type="number"
+                    onChange={(event) => setRenewalFee(+event.target.value)}
+                    required
+                    ms={2}
+                  />
+              </Flex>
+              <Flex flexDirection="column">
+              {error && (
+                <Alert status="error">
+                  <AlertIcon />
+                  {errorMessage}
+                </Alert>
+              )}
+
+              {success && (
+                <Alert status="success">
+                  <AlertIcon />
+                  {successMessage}
+                </Alert>
+              )}
+            </Flex>
             </ModalBody>
   
             <Flex>
@@ -263,9 +330,15 @@ import {
                 Create
               </Button> */}
 
-              <Button as={RouterLink} to='/saasMintPage'>     
+              <Button       
+              type="submit"
+              width="100%"
+              colorScheme="green"
+              borderRadius="none"
+              isLoading={loading}
+              loadingText="Creating Collection... Please Wait..."
+              >     
               Create Contract
-
               </Button>
             </Flex>
           </form>
