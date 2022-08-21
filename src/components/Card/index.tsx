@@ -8,7 +8,7 @@ type CardProps = {
   secondaryLabel: string;
   description?: string;
   descriptionLink?: string;
-  imageSrc: string;
+  imageSrc?: string;
   primaryButtonLabel: string;
   primaryButtonAction: () => void;
   secondaryButtonLabel?: string;
@@ -51,8 +51,13 @@ function Card({
       </Flex>
 
       <Flex className="card-body" flexDirection="column" py={5}>
-        <Tooltip label={description}>View owner guidelines</Tooltip>
-        <Image src={imageSrc} height="64px" objectFit={"contain"} />
+        {description && (
+          <Tooltip label={description}>View owner guidelines</Tooltip>
+        )}
+
+        {imageSrc && (
+          <Image src={imageSrc} height="64px" objectFit={"contain"} />
+        )}
       </Flex>
 
       <Flex className="card-footer" justifyContent="space-between">

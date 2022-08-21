@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { BigNumber } from "ethers";
 import { useContext, useState } from "react";
+import { symbolName } from "typescript";
 // import { NFTStorage } from 'nft.storage';
 import { WalletContext } from "../../contexts/WalletContext";
 import {
@@ -28,27 +29,27 @@ import {
   nftMarketPlaceContractAddress,
   services,
 } from "../../env";
-import { AuthSig, litEncrypt } from "../../lit-app";
-import { getEip4361Msg } from "../../lit-app/get-eip4361-msg";
-
-// const storage = new NFTStorage({
-//     endpoint: 'https://api.nft.storage',
-//     token
-// });
 
 type CreateModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
+type tCollection = {
+  name: string;
+  symbol: string;
+  royaltyFeeBips: number;
+};
+
 function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
   const walletContext = useContext(WalletContext);
 
   const [selectedService, setSelectedService] = useState("prime");
-  const [saasUri, setSaasURI] = useState("");
+  const [name, setName] = useState("");
+  const [royaltyFeeBips, setRoyaltyFeeBips] = useState(1);
+  const [symbol, setSymbol] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -73,104 +74,27 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    const nftFactory = OnDripDirectLicense__factory.connect(nftContractAddress, signer);
-
-    let tokenIdBigNum: BigNumber;
-
-    // mint the NFT
-    try {
-      setLoading(true);
-      const mintNFT = await nftFactory.mint(
-        sassUri,
-        description
-      );
-
-      const response = await mintNFT.wait();
-      console.log(response.events);
-      tokenIdBigNum = response.events?.[0].args?.tokenId as BigNumber;
-    } catch (e: any) {
-      console.log("Mint Error: ", e);
-      setError(true);
-      setErrorMessage(e.message);
-      setLoading(false);
-      return;
-    }
-    const walletAddr = await signer.getAddress();
-    let authSig: AuthSig;
-
-    const initAuthSig = async (): Promise<AuthSig> => {
-      const msg = getEip4361Msg(walletAddr);
-      const sig = await signer.signMessage(msg);
-      let _authSig = {
-        address: walletAddr,
-        derivedVia: "web3.personal.sign",
-        sig,
-        signedMessage: msg,
-      };
-      localStorage.setItem("authSig", JSON.stringify(_authSig));
-      return _authSig;
+    const _collections = JSON.parse(
+      localStorage.getItem("dlCollections") ?? "[]"
+    ) as tCollection[];
+    const _collection: tCollection = {
+      name,
+      royaltyFeeBips,
+      symbol,
     };
-    const authSignJson = localStorage.getItem("authSig");
-    if (authSignJson) {
-      authSig = JSON.parse(authSignJson);
-      if (authSig.address.toLowerCase() !== walletAddr.toLowerCase())
-        authSig = await initAuthSig();
-    } else {
-      authSig = await initAuthSig();
-    }
-    // update NFT with credentials
-    try {
-      const credentialsToken = await litEncrypt(
-        authSig,
-        tokenIdBigNum.toNumber().toString(),
-        username,
-        password
-      );
+    _collections.push(_collection);
 
-      await nftFactory
-        .updateTokenCredentials(credentialsToken, tokenIdBigNum)
-        .then((e) => e.wait());
+    localStorage.setItem("dlCollections", JSON.stringify(_collections));
+    setLoading(true);
 
-      setSuccess(true);
-      setSuccessMessage("Minted NFT Successfully");
-    } catch (e: any) {
-      console.log("Lit Error: ", e);
-    }
-
-    // Approve NFT Marketplace contract
-    try {
-      await nftFactory
-        .approve(nftMarketPlaceContractAddress, tokenIdBigNum)
-        .then((e) => e.wait());
-    } catch (e: any) {
-      console.log("Marketplace approval error: ", e);
-    }
-
-    // add nft to marketplace
-    try {
-      // const nftMarketFactory = OnDripMarketPlace__factory.connect(
-      //   nftMarketPlaceContractAddress,
-      //   signer
-      // );
-
-      /*await nftMarketFactory
-        .createMarketItem(nftContractAddress, tokenIdBigNum, salePriceWei)
-        .then((e) => e.wait());*/
-
-      setSuccess(true);
-      setSuccessMessage("NFT Added to MarketPlace Successfully");
-    } catch (e: any) {
-      console.log("Add to marketplace Error: ", e);
-      setError(true);
-      setErrorMessage(e.message);
+    setTimeout(() => {
       setLoading(false);
-      return;
-    }
-
-    setSaasURI("");
-    setUsername("");
-    setPassword("");
-    setLoading(false);
+      setSuccess(true);
+      setSuccessMessage("Collection succefully added");
+      setName("");
+      setUsername("");
+      setPassword("");
+    }, 2000);
   };
 
   return (
@@ -205,27 +129,34 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
             </FormControl>
 
             <FormControl mb={2}>
-              <FormLabel>SAAS URI</FormLabel>
-
+              <FormLabel>Name</FormLabel>
               <Textarea
-                value={saasUri}
-                placeholder="URI"
+                onChange={(event) => setName(event.target.value)}
+                value={name}
+                placeholder="Name"
                 required
-              >
-              </Textarea>
+              ></Textarea>
             </FormControl>
-
-            <Flex flexDirection="column">
-              <FormLabel>Description</FormLabel>
-
-              <Input
-                placeholder="Use abc account"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
+            <FormControl mb={2}>
+              <FormLabel>Symbol</FormLabel>
+              <Textarea
+                onChange={(event) => setSymbol(event.target.value)}
+                value={symbol}
+                placeholder="Symbol"
                 required
-                me={2}
-              />
-
+              ></Textarea>
+            </FormControl>
+            <FormControl mb={2}>
+              <FormLabel>Royalty Fee Bips</FormLabel>
+              <Input
+                type="number"
+                value={royaltyFeeBips}
+                placeholder="Royalty Fee Bips"
+                onChange={(event) => setRoyaltyFeeBips(+event.target.value)}
+                required
+              ></Input>
+            </FormControl>
+            <Flex flexDirection="column">
               {error && (
                 <Alert status="error">
                   <AlertIcon />
@@ -249,7 +180,7 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
               colorScheme="green"
               borderRadius="none"
               isLoading={loading}
-              loadingText="Minting NFT... Please Wait..."
+              loadingText="Creating Collection... Please Wait..."
             >
               Create
             </Button>
