@@ -2,7 +2,6 @@ import {
     Flex,
     Box,
     Heading,
-    Grid,
     Button,
     useDisclosure,
   } from "@chakra-ui/react";
@@ -17,7 +16,7 @@ function Saas() {
            <Flex className="user-nfts" flexDirection="column">
         <Flex my={5} alignItems="center">
         <Heading fontSize="2xl" my={5}>
-          SaaS
+          SaaS Collections
         </Heading>
          <Button
             onClick={onOpen}
@@ -27,7 +26,7 @@ function Saas() {
             ml="40px"
             px={8}
           >
-            Add
+            Create
           </Button>
           </Flex>
           </Flex>

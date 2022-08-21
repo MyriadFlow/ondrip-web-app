@@ -11,18 +11,17 @@ import {
   Flex,
   Grid,
   Image,
-  NumberInput,
-  NumberInputField,
   Alert,
   AlertIcon,
+  Textarea,
 } from "@chakra-ui/react";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import { useContext, useState } from "react";
 // import { NFTStorage } from 'nft.storage';
 import { WalletContext } from "../../contexts/WalletContext";
 import {
+  OnDripDirectLicense__factory,
   OnDripMarketPlace__factory,
-  OnDripNFT__factory,
 } from "../../contracts";
 import {
   nftContractAddress,
@@ -46,9 +45,7 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
   const walletContext = useContext(WalletContext);
 
   const [selectedService, setSelectedService] = useState("prime");
-  const [salePrice, setSalePrice] = useState("");
-  const [topUpAmount, setTopUpAmount] = useState("");
-  const [renewalFee, setRenewalFee] = useState("");
+  const [saasUri, setSaasURI] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [description, setDescription] = useState("");
@@ -65,10 +62,10 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
     setSuccess(false);
     setSuccessMessage("");
 
-    let vendorUri = services.find(
+    let sassUri = services.find(
       (service) => service.name === selectedService
     )?.url;
-    if (!vendorUri) vendorUri = "";
+    if (!sassUri) sassUri = "";
 
     const signer = walletContext.web3Provider?.getSigner();
     if (!signer) {
@@ -76,22 +73,16 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    const nftFactory = OnDripNFT__factory.connect(nftContractAddress, signer);
+    const nftFactory = OnDripDirectLicense__factory.connect(nftContractAddress, signer);
 
     let tokenIdBigNum: BigNumber;
-
-    let topUpAmountWei = ethers.utils.parseEther(topUpAmount);
-    let renewalFeeWei = ethers.utils.parseEther(renewalFee);
-    let salePriceWei = ethers.utils.parseEther(salePrice);
 
     // mint the NFT
     try {
       setLoading(true);
       const mintNFT = await nftFactory.mint(
-        vendorUri,
-        description,
-        topUpAmountWei,
-        renewalFeeWei
+        sassUri,
+        description
       );
 
       const response = await mintNFT.wait();
@@ -157,14 +148,14 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
 
     // add nft to marketplace
     try {
-      const nftMarketFactory = OnDripMarketPlace__factory.connect(
-        nftMarketPlaceContractAddress,
-        signer
-      );
+      // const nftMarketFactory = OnDripMarketPlace__factory.connect(
+      //   nftMarketPlaceContractAddress,
+      //   signer
+      // );
 
-      await nftMarketFactory
+      /*await nftMarketFactory
         .createMarketItem(nftContractAddress, tokenIdBigNum, salePriceWei)
-        .then((e) => e.wait());
+        .then((e) => e.wait());*/
 
       setSuccess(true);
       setSuccessMessage("NFT Added to MarketPlace Successfully");
@@ -176,9 +167,7 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    setSalePrice("");
-    setTopUpAmount("");
-    setRenewalFee("");
+    setSaasURI("");
     setUsername("");
     setPassword("");
     setLoading(false);
@@ -216,63 +205,14 @@ function CreateDirectLicenseModal({ isOpen, onClose }: CreateModalProps) {
             </FormControl>
 
             <FormControl mb={2}>
-              <FormLabel>Sale Price</FormLabel>
+              <FormLabel>SAAS URI</FormLabel>
 
-              <NumberInput
-                value={salePrice}
-                onChange={(value) => setSalePrice(value)}
-                min={0}
-                precision={2}
+              <Textarea
+                value={saasUri}
+                placeholder="URI"
+                required
               >
-                <NumberInputField placeholder="In Matic" required />
-              </NumberInput>
-            </FormControl>
-
-            <FormControl mb={2}>
-              <FormLabel>Top Up Price</FormLabel>
-
-              <NumberInput
-                value={topUpAmount}
-                onChange={(value) => setTopUpAmount(value)}
-                min={0}
-                precision={2}
-              >
-                <NumberInputField placeholder="In Matic" required />
-              </NumberInput>
-            </FormControl>
-
-            <FormControl mb={2}>
-              <FormLabel>Renewal Fee</FormLabel>
-
-              <NumberInput
-                value={renewalFee}
-                onChange={(value) => setRenewalFee(value)}
-                min={0}
-                precision={2}
-              >
-                <NumberInputField placeholder="In Matic" required />
-              </NumberInput>
-            </FormControl>
-
-            <FormControl mb={4}>
-              <FormLabel>Credentials</FormLabel>
-
-              <Flex justifyContent="space-between">
-                <Input
-                  placeholder="Username / Email"
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  required
-                  me={2}
-                />
-                <Input
-                  placeholder="Password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                  ms={2}
-                />
-              </Flex>
+              </Textarea>
             </FormControl>
 
             <Flex flexDirection="column">
