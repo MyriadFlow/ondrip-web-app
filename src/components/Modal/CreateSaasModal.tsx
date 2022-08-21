@@ -22,7 +22,7 @@ import { useContext, useState } from "react";
 import { WalletContext } from "../../contexts/WalletContext";
 import {
   OnDripMarketPlace__factory,
-  OnDripNFT__factory,
+  OnDripSaas__factory,
 } from "../../contracts";
 import {
   nftContractAddress,
@@ -76,7 +76,7 @@ function CreateSaasModal({ isOpen, onClose }: CreateModalProps) {
       return;
     }
 
-    const nftFactory = OnDripNFT__factory.connect(nftContractAddress, signer);
+    const nftFactory = OnDripSaas__factory.connect(nftContractAddress, signer);
 
     let tokenIdBigNum: BigNumber;
 
@@ -191,6 +191,7 @@ function CreateSaasModal({ isOpen, onClose }: CreateModalProps) {
         <form onSubmit={handleSubmit}>
           <ModalCloseButton />
           <ModalBody px="20px" py="30px">
+          <FormLabel>Saas</FormLabel>
             <FormControl mb={2}>
               <FormLabel>Select Service</FormLabel>
 
