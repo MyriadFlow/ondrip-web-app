@@ -25,6 +25,7 @@ import {
   OnDripSaas__factory,
 } from "../../contracts";
 import {
+  BigMacNFT,
   nftContractAddress,
   nftMarketPlaceContractAddress,
   services,
@@ -196,7 +197,7 @@ function CreateSaasModal({ isOpen, onClose }: CreateModalProps) {
               <FormLabel>Select Service</FormLabel>
 
               <Grid templateColumns="repeat(4, 100px)" gap={4}>
-                {services.map((service, i) => (
+                {BigMacNFT.map((service, i) => (
                   <Image
                     key={i}
                     src={service.url}

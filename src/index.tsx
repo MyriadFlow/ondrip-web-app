@@ -17,6 +17,7 @@ import DirectLicense from './pages/DirectLicense';
 import { WalletProvider } from "./contexts/WalletContext";
 import { client } from "./graph-ql";
 import reportWebVitals from './reportWebVitals';
+import SaasMintPage from './pages/SaasMintPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -38,6 +39,7 @@ root.render(
                 <Route path='vendor' element={<Vendor />} />
                 <Route path='saas' element={<Saas />} />
                 <Route path='directLicense' element={<DirectLicense />} />
+                <Route path='saasMintPage' element={<SaasMintPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
